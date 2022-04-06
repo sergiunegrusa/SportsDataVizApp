@@ -18,7 +18,7 @@ from app import app
 from app import server
 
 # Connect to your app pages
-from apps import matchViewPage
+from apps import matchViewPage, playerViewPage
 
 # from apps.resourceFun.pitchTypes import *
 from apps.resourceFun.databaseReaders import *
@@ -30,7 +30,7 @@ from apps.resourceFun.uploadFromFolder import save_file, file_download_link, upl
 PATH = pathlib.Path()
 DATA_PATH = PATH.joinpath("../datasets").resolve()
 
-# df = pd.read_csv('./datasets/europaFinal.csv')
+df = pd.read_csv('./datasets/europaFinal.csv')
 
 # Layout section: Bootstrap
 # --------------------------
@@ -58,13 +58,14 @@ app.layout = dbc.Container([
             ),
             html.H2("File List"),
             dcc.Link(
-                html.Ul(id="file-list"), href='/apps/matchViewPage'
+                html.Ul(id="file-list"), href='/apps/playerViewPage',
             ),
         ],
         style={"max-width": "500px"},
     ),
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content', children=[])
+    html.Div(id='page-content', children=[]),
+    dcc.Store('stored_data', data=[], storage_type='memory'),
 ])
 
 
@@ -75,11 +76,11 @@ app.layout = dbc.Container([
 )
 def update_output(uploaded_filenames, uploaded_file_contents):
     """Save uploaded files and regenerate the file list."""
-
     if uploaded_filenames is not None and uploaded_file_contents is not None:
         for name, data in zip(uploaded_filenames, uploaded_file_contents):
             save_file(name, data)
         df = pd.read_csv(uploaded_filenames)
+        print(df)
     files = uploaded_files()
     if len(files) == 0:
         return [html.Li("No files yet!")]
@@ -95,8 +96,10 @@ def update_output(uploaded_filenames, uploaded_file_contents):
 def display_page(pathname):
     if pathname == '/apps/matchViewPage':
         return matchViewPage.layout
+    elif pathname == '/apps/playerViewPage':
+        return playerViewPage.layout
     else:
-        return "404 Page Error! Please choose a link"
+        return "Please choose a match"
 
 if __name__ == '__main__':
     app.run_server(debug=False)

@@ -31,7 +31,7 @@ layout = dbc.Container([
                      options=[{'label': x, 'value': x}
                               for x in sorted(df['teamId'].unique())],
                      className='row, mb-4', style={'width': '50%'}),
-        dcc.Dropdown(id='selected_period', multi=False, value='FirstHalf',
+        dcc.Dropdown(id='selected_period', multi=False, value='Match',
                              options=['FirstHalf', 'SecondHalf', 'FirstPeriodOfExtraTime', 'SecondPeriodOfExtraTime',
                                       'Match'],
                              className='row, mb-4', style={'width': '50%'}),
@@ -46,8 +46,6 @@ layout = dbc.Container([
     html.Div([
         dcc.Graph(id='graph1', figure={}, style={'width': '90vh', 'height': '60vh'}),
     ]),
-
-    dcc.Store('store_data', data=[], storage_type='memory'),
 ])
 
 
